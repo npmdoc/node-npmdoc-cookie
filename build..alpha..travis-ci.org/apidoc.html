@@ -1,0 +1,266 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/jshttp/cookie"
+
+    >cookie (v0.3.1)</a>
+</h1>
+<h4>HTTP server cookie parsing and serialization</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.cookie">module cookie</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.cookie.parse">
+            function <span class="apidocSignatureSpan">cookie.</span>parse
+            <span class="apidocSignatureSpan">(str, options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.cookie.serialize">
+            function <span class="apidocSignatureSpan">cookie.</span>serialize
+            <span class="apidocSignatureSpan">(name, val, options)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.cookie" id="apidoc.module.cookie">module cookie</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.cookie.parse" id="apidoc.element.cookie.parse">
+        function <span class="apidocSignatureSpan">cookie.</span>parse
+        <span class="apidocSignatureSpan">(str, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function parse(str, options) {
+  if (typeof str !== &#x27;string&#x27;) {
+    throw new TypeError(&#x27;argument str must be a string&#x27;);
+  }
+
+  var obj = {}
+  var opt = options || {};
+  var pairs = str.split(pairSplitRegExp);
+  var dec = opt.decode || decode;
+
+  for (var i = 0; i &#x3c; pairs.length; i++) {
+    var pair = pairs[i];
+    var eq_idx = pair.indexOf(&#x27;=&#x27;);
+
+    // skip things that don&#x27;t look like key=value
+    if (eq_idx &#x3c; 0) {
+      continue;
+    }
+
+    var key = pair.substr(0, eq_idx).trim()
+    var val = pair.substr(++eq_idx, pair.length).trim();
+
+    // quoted values
+    if (&#x27;&#x22;&#x27; == val[0]) {
+      val = val.slice(1, -1);
+    }
+
+    // only assign once
+    if (undefined == obj[key]) {
+      obj[key] = tryDecode(val, dec);
+    }
+  }
+
+  return obj;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+## API
+
+```js
+var cookie = require(&#x27;cookie&#x27;);
+```
+
+### cookie.<span class="apidocCodeKeywordSpan">parse</span>(str, options)
+
+Parse an HTTP `Cookie` header string and returning an object of all cookie name-value pairs.
+The `str` argument is the string representing a `Cookie` header value and `options` is an
+optional object containing additional parsing options.
+
+```js
+var cookies = cookie.parse(&#x27;foo=bar; equation=E%3Dmc%5E2&#x27;);
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.cookie.serialize" id="apidoc.element.cookie.serialize">
+        function <span class="apidocSignatureSpan">cookie.</span>serialize
+        <span class="apidocSignatureSpan">(name, val, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function serialize(name, val, options) {
+  var opt = options || {};
+  var enc = opt.encode || encode;
+
+  if (typeof enc !== &#x27;function&#x27;) {
+    throw new TypeError(&#x27;option encode is invalid&#x27;);
+  }
+
+  if (!fieldContentRegExp.test(name)) {
+    throw new TypeError(&#x27;argument name is invalid&#x27;);
+  }
+
+  var value = enc(val);
+
+  if (value &#x26;&#x26; !fieldContentRegExp.test(value)) {
+    throw new TypeError(&#x27;argument val is invalid&#x27;);
+  }
+
+  var str = name + &#x27;=&#x27; + value;
+
+  if (null != opt.maxAge) {
+    var maxAge = opt.maxAge - 0;
+    if (isNaN(maxAge)) throw new Error(&#x27;maxAge should be a Number&#x27;);
+    str += &#x27;; Max-Age=&#x27; + Math.floor(maxAge);
+  }
+
+  if (opt.domain) {
+    if (!fieldContentRegExp.test(opt.domain)) {
+      throw new TypeError(&#x27;option domain is invalid&#x27;);
+    }
+
+    str += &#x27;; Domain=&#x27; + opt.domain;
+  }
+
+  if (opt.path) {
+    if (!fieldContentRegExp.test(opt.path)) {
+      throw new TypeError(&#x27;option path is invalid&#x27;);
+    }
+
+    str += &#x27;; Path=&#x27; + opt.path;
+  }
+
+  if (opt.expires) {
+    if (typeof opt.expires.toUTCString !== &#x27;function&#x27;) {
+      throw new TypeError(&#x27;option expires is invalid&#x27;);
+    }
+
+    str += &#x27;; Expires=&#x27; + opt.expires.toUTCString();
+  }
+
+  if (opt.httpOnly) {
+    str += &#x27;; HttpOnly&#x27;;
+  }
+
+  if (opt.secure) {
+    str += &#x27;; Secure&#x27;;
+  }
+
+  if (opt.sameSite) {
+    var sameSite = typeof opt.sameSite === &#x27;string&#x27;
+      ? opt.sameSite.toLowerCase() : opt.sameSite;
+
+    switch (sameSite) {
+      case true:
+        str += &#x27;; SameSite=Strict&#x27;;
+        break;
+      case &#x27;lax&#x27;:
+        str += &#x27;; SameSite=Lax&#x27;;
+        break;
+      case &#x27;strict&#x27;:
+        str += &#x27;; SameSite=Strict&#x27;;
+        break;
+      default:
+        throw new TypeError(&#x27;option sameSite is invalid&#x27;);
+    }
+  }
+
+  return str;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+The default function is the global `decodeURIComponent`, which will decode any URL-encoded
+sequences into their byte representations.
+
+**note** if an error is thrown from this function, the original, non-decoded cookie value will
+be returned as the cookie&#x27;s value.
+
+### cookie.<span class="apidocCodeKeywordSpan">serialize</span>(name, value, options)
+
+Serialize a cookie name-value pair into a `Set-Cookie` header string. The `name` argument is the
+name for the cookie, the `value` argument is the value to set the cookie to, and the `options`
+argument is an optional object containing additional serialization options.
+
+```js
+var setCookie = cookie.serialize(&#x27;foo&#x27;, &#x27;bar&#x27;);
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
