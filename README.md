@@ -1,6 +1,6 @@
 # npmdoc-cookie
 
-#### api documentation for  [cookie (v0.3.1)](https://github.com/jshttp/cookie)  [![npm package](https://img.shields.io/npm/v/npmdoc-cookie.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-cookie) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-cookie.svg)](https://travis-ci.org/npmdoc/node-npmdoc-cookie)
+#### basic api documentation for  [cookie (v0.3.1)](https://github.com/jshttp/cookie)  [![npm package](https://img.shields.io/npm/v/npmdoc-cookie.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-cookie) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-cookie.svg)](https://travis-ci.org/npmdoc/node-npmdoc-cookie)
 
 #### HTTP server cookie parsing and serialization
 
@@ -75,7 +75,8 @@
         "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/",
         "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/"
     },
-    "version": "0.3.1"
+    "version": "0.3.1",
+    "bin": {}
 }
 ```
 
